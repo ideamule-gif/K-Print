@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Доставка и оплата — K-Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --text: #2f3542;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        /* ШАПКА */
+        header {
+            background: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1300px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px;
+        }
+        .logo {
+            font-size: 26px; font-weight: 800;
+            color: var(--primary); text-decoration: none; letter-spacing: -1px;
+        }
+        .logo span { color: var(--accent); font-weight: 300; }
+        nav ul {
+            list-style: none; display: flex; gap: 10px;
+            margin: 0; padding: 0; align-items: center;
+        }
+        nav ul li a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: var(--primary); font-weight: 600; font-size: 12px;
+            width: 78px; height: 72px; border-radius: 14px;
+            background: transparent; text-align: center; gap: 5px; transition: 0.2s;
+        }
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+        nav ul li a:hover { background: #f0f0f0; color: var(--accent); }
+        nav ul li a.active { background: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+        .login-btn { background: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background: #20bf6b !important; }
+
+        .burger {
+            display: none; flex-direction: column; gap: 5px;
+            cursor: pointer; background: none; border: none; padding: 10px;
+        }
+        .burger span {
+            width: 26px; height: 3px; background: var(--primary);
+            border-radius: 3px; transition: 0.3s;
+        }
+
+        /* КОНТЕНТ */
+        .main-content {
+            margin-top: 100px; max-width: 600px;
+            margin-left: auto; margin-right: auto; padding: 20px;
+        }
+        h1 { font-weight: 800; font-size: 26px; margin-bottom: 25px; }
+
+        /* БЛОК */
+        .block {
+            background: var(--white); border-radius: 16px;
+            padding: 20px; box-shadow: var(--shadow); margin-bottom: 20px;
+        }
+        .block h3 {
+            font-size: 15px; font-weight: 700; margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        /* РАДИО-КАРТОЧКИ */
+        .radio-row { display: flex; flex-direction: column; gap: 10px; }
+        .radio-card {
+            border: 2px solid #e0e0e0; border-radius: 12px;
+            padding: 16px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: flex-start; gap: 12px;
+        }
+        .radio-card:hover { border-color: var(--accent); }
+        .radio-card.selected {
+            border-color: var(--accent); background: #f0fff5;
+        }
+        .radio-card input { display: none; }
+        .radio-card .radio-icon {
+            width: 20px; height: 20px; border-radius: 50%;
+            border: 2px solid #ccc; flex-shrink: 0; margin-top: 2px;
+            transition: 0.2s;
+        }
+        .radio-card.selected .radio-icon {
+            border-color: var(--accent); background: var(--accent);
+            box-shadow: inset 0 0 0 4px white;
+        }
+        .radio-card .radio-text { flex: 1; }
+        .radio-card .radio-title { font-weight: 700; font-size: 15px; }
+        .radio-card .radio-desc { font-size: 13px; color: #747d8c; font-weight: 300; margin-top: 2px; }
+        .radio-card .radio-price { font-weight: 800; font-size: 16px; color: var(--accent); white-space: nowrap; }
+
+        /* ПОЛЕ АДРЕСА */
+        .address-field {
+            margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;
+            display: none;
+        }
+        .address-field input {
+            width: 100%; padding: 12px 14px; border: 1px solid #dfe4ea;
+            border-radius: 10px; font-size: 15px; font-family: inherit;
+        }
+
+        /* ПВЗ */
+        .pvz-list {
+            margin-top: 12px; padding-top: 12px; border-top: 1px solid #e0e0e0;
+            display: none; max-height: 300px; overflow-y: auto;
+        }
+        .pvz-item {
+            padding: 10px; border-radius: 8px; cursor: pointer;
+            border: 1px solid transparent; margin-bottom: 4px;
+            font-size: 13px; transition: 0.2s;
+        }
+        .pvz-item:hover { background: #f5f5f5; }
+        .pvz-item.selected { border-color: var(--accent); background: #f0fff5; font-weight: 600; }
+        .pvz-item .pvz-name { font-weight: 600; }
+        .pvz-item .pvz-addr { color: #747d8c; font-size: 12px; font-weight: 300; }
+
+        /* ОПЛАТА */
+        .payment-card {
+            border: 2px solid var(--accent); border-radius: 12px;
+            padding: 16px; background: #f0fff5;
+            display: flex; gap: 12px; align-items: center;
+        }
+        .payment-card .card-icon { font-size: 32px; }
+        .payment-card .card-title { font-weight: 700; }
+        .payment-card .card-desc { font-size: 13px; color: #747d8c; font-weight: 300; }
+
+        /* СВОДКА */
+        .summary-row {
+            display: flex; justify-content: space-between;
+            padding: 8px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px;
+        }
+        .summary-row:last-child { border: none; font-weight: 700; font-size: 20px; color: var(--accent); }
+        .summary-row .label { color: #747d8c; font-weight: 300; }
+
+        /* КНОПКА */
+        .btn-submit {
+            width: 100%; background: var(--accent); color: white;
+            border: none; padding: 16px; border-radius: 14px;
+            font-weight: 700; font-size: 17px; cursor: pointer;
+            transition: 0.3s; font-family: inherit; margin-top: 10px;
+        }
+        .btn-submit:hover { background: #20bf6b; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(38,222,129,0.3); }
+        .btn-back {
+            display: block; text-align: center; margin-top: 12px;
+            color: #747d8c; font-size: 13px; font-weight: 600; text-decoration: none;
+        }
+        .btn-back:hover { color: var(--primary); }
+
+        footer {
+            text-align: center; padding: 30px; color: #a4b0be;
+            font-size: 13px; font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; }
+            nav ul { display: none; flex-direction: column; width: 100%; gap: 4px; margin-top: 10px; }
+            nav ul.show { display: flex; }
+            nav ul li a { width: 100%; height: 44px; flex-direction: row; gap: 8px; font-size: 13px; justify-content: flex-start; padding-left: 14px; }
+            nav ul li a .nav-icon { font-size: 20px; }
+            .burger { display: flex; }
+            .main-content { margin-top: 80px; padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <button class="burger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+        <nav>
+            <ul id="navList">
+                <li><a href="index.html"><span class="nav-icon">🏠</span> Главная</a></li>
+                <li><a href="calc.html"><span class="nav-icon">📐</span> Калькулятор</a></li>
+                <li><a href="designer.html"><span class="nav-icon">🎨</span> Редактор</a></li>
+                <li><a href="orders.html"><span class="nav-icon">📋</span> Заказы</a></li>
+                <li><a href="about.html"><span class="nav-icon">ℹ️</span> О нас</a></li>
+                <li><a href="profile.html"><span class="nav-icon">👤</span> Профиль</a></li>
+                <li><a href="login.html" class="login-btn"><span class="nav-icon">🔑</span> Вход</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="main-content">
+    <h1>🚚 Доставка и оплата</h1>
+
+    <!-- Способ получения -->
+    <div class="block">
+        <h3>📍 Способ получения</h3>
+        <div class="radio-row" id="deliverySelect">
+            <!-- Самовывоз -->
+            <label class="radio-card selected" onclick="selectDelivery('pickup', this)">
+                <input type="radio" name="delivery" value="pickup" checked>
+                <div class="radio-icon"></div>
+                <div class="radio-text">
+                    <div class="radio-title">🏢 Самовывоз из ПВЗ</div>
+                    <div class="radio-desc">Заберите заказ в удобном пункте выдачи</div>
+                </div>
+                <div class="radio-price">Бесплатно</div>
+            </label>
+
+            <!-- Доставка по Краснодару -->
+            <label class="radio-card" onclick="selectDelivery('address', this)">
+                <input type="radio" name="delivery" value="address">
+                <div class="radio-icon"></div>
+                <div class="radio-text">
+                    <div class="radio-title">🚗 Доставка по Краснодару</div>
+                    <div class="radio-desc">Курьер привезёт заказ по вашему адресу</div>
+                </div>
+                <div class="radio-price">от 500 ₽</div>
+            </label>
+            <div class="address-field" id="addressField">
+                <input type="text" id="deliveryAddress" placeholder="Улица, дом, квартира, подъезд">
+            </div>
+
+            <!-- DPD ПВЗ -->
+            <label class="radio-card" onclick="selectDelivery('dpd', this)">
+                <input type="radio" name="delivery" value="dpd">
+                <div class="radio-icon"></div>
+                <div class="radio-text">
+                    <div class="radio-title">📦 DPD Pickup</div>
+                    <div class="radio-desc">Выберите пункт выдачи DPD</div>
+                </div>
+                <div class="radio-price">от 300 ₽</div>
+            </label>
+            <div class="pvz-list" id="dpdList">
+                <div class="pvz-item" onclick="selectPvz(this, 'ул. Красная, 176 — ТЦ Мега', 'DPD-001')">
+                    <div class="pvz-name">ТЦ Мега</div>
+                    <div class="pvz-addr">ул. Красная, 176</div>
+                </div>
+                <div class="pvz-item" onclick="selectPvz(this, 'ул. Северная, 490 — ТЦ Красная Площадь', 'DPD-002')">
+                    <div class="pvz-name">ТЦ Красная Площадь</div>
+                    <div class="pvz-addr">ул. Северная, 490</div>
+                </div>
+                <div class="pvz-item" onclick="selectPvz(this, 'ул. Ставропольская, 134 — ТЦ Галерея', 'DPD-003')">
+                    <div class="pvz-name">ТЦ Галерея</div>
+                    <div class="pvz-addr">ул. Ставропольская, 134</div>
+                </div>
+                <div class="pvz-item" onclick="selectPvz(this, 'пр. Чекистов, 42', 'DPD-004')">
+                    <div class="pvz-name">Юбилейный</div>
+                    <div class="pvz-addr">пр. Чекистов, 42</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Оплата -->
+    <div class="block">
+        <h3>💳 Способ оплаты</h3>
+        <div class="payment-card">
+            <div class="card-icon">💳</div>
+            <div>
+                <div class="card-title">Банковская карта</div>
+                <div class="card-desc">Visa, MasterCard, МИР. Оплата через защищённый шлюз.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Сводка -->
+    <div class="block" id="finalSummary">
+        <div class="summary-row"><span class="label">Заказ:</span><span id="fMaterial">—</span></div>
+        <div class="summary-row"><span class="label">Размер / Кол-во:</span><span id="fSize">—</span></div>
+        <div class="summary-row"><span class="label">Доставка:</span><span id="fDelivery">Самовывоз — бесплатно</span></div>
+        <div class="summary-row"><span class="label">Итого:</span><span id="fTotal">—</span></div>
+    </div>
+
+    <button class="btn-submit" onclick="confirmOrder()">✅ Оплатить и подтвердить</button>
+    <a href="checkout.html" class="btn-back">← Назад к оформлению</a>
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Типография будущего
+</footer>
+
+<script>
+    const orderData = JSON.parse(localStorage.getItem('kprintOrder') || '{}');
+
+    // Сводка
+    function fillFinal() {
+        document.getElementById('fMaterial').innerText = orderData.material || '—';
+        document.getElementById('fSize').innerText = `${orderData.width} × ${orderData.height} мм / ${orderData.quantity} шт.`;
+        document.getElementById('fTotal').innerText = `${(orderData.total || 0).toLocaleString()} р.`;
+    }
+    fillFinal();
+
+    // Выбор доставки
+    function selectDelivery(type, el) {
+        document.querySelectorAll('#deliverySelect .radio-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        el.querySelector('input').checked = true;
+
+        document.getElementById('addressField').style.display = type === 'address' ? 'block' : 'none';
+        document.getElementById('dpdList').style.display = type === 'dpd' ? 'block' : 'none';
+
+        const texts = {
+            pickup: 'Самовывоз — бесплатно',
+            address: 'Доставка по Краснодару — от 500 ₽',
+            dpd: 'DPD Pickup — от 300 ₽'
+        };
+        document.getElementById('fDelivery').innerText = texts[type];
+    }
+
+    function selectPvz(el, addr, id) {
+        document.querySelectorAll('#dpdList .pvz-item').forEach(i => i.classList.remove('selected'));
+        el.classList.add('selected');
+        document.getElementById('fDelivery').innerText = `DPD: ${addr}`;
+    }
+
+    function confirmOrder() {
+        const delivery = document.querySelector('input[name="delivery"]:checked').value;
+        const order = {
+            ...orderData,
+            deliveryType: delivery,
+            deliveryAddress: delivery === 'address' ? document.getElementById('deliveryAddress').value : '',
+            paymentMethod: 'card',
+            confirmedAt: new Date().toISOString()
+        };
+
+        // Сохраняем в историю
+        const orders = JSON.parse(localStorage.getItem('kprintOrders') || '[]');
+        orders.unshift(order);
+        localStorage.setItem('kprintOrders', JSON.stringify(orders.slice(0, 100)));
+
+        alert('🎉 Заказ оплачен и подтверждён!');
+        window.location.href = 'orders.html';
+    }
+
+    function toggleMenu() {
+        document.getElementById('navList').classList.toggle('show');
+    }
+</script>
+
+</body>
+</html>

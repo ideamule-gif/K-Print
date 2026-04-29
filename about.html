@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О нас — K-Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --text: #2f3542;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 400;
+        }
+
+        /* ЗАКРЕПЛЕННОЕ МЕНЮ */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--accent); font-weight: 300; }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        nav ul li a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.2s;
+            width: 78px;
+            height: 72px;
+            border-radius: 14px;
+            background-color: transparent;
+            text-align: center;
+            gap: 5px;
+        }
+
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+
+        nav ul li a:hover { background-color: #f0f0f0; color: var(--accent); }
+
+        nav ul li a.active { background-color: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+
+        .login-btn { background-color: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background-color: #20bf6b !important; }
+
+        /* КОНТЕНТ */
+        .main-content {
+            margin-top: 100px;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 40px 20px;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-header h1 {
+            font-size: 38px;
+            font-weight: 800;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .about-header p {
+            font-size: 18px;
+            color: #747d8c;
+            font-weight: 300;
+        }
+
+        .grid-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .feature-box {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .feature-box h3 {
+            margin-top: 0;
+            color: var(--accent);
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .feature-box p {
+            font-weight: 300;
+            color: #555;
+        }
+
+        .contact-section {
+            background: var(--primary);
+            color: white;
+            padding: 40px;
+            border-radius: 25px;
+            margin-top: 60px;
+            text-align: center;
+        }
+
+        .contact-section h2 { margin-top: 0; font-weight: 700; }
+        .contact-section p { font-weight: 300; opacity: 0.9; }
+
+        .tg-link {
+            display: inline-block;
+            margin-top: 20px;
+            background: var(--accent);
+            color: white;
+            text-decoration: none;
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .tg-link:hover { background: #20bf6b; transform: scale(1.03); }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #a4b0be;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 10px; }
+            nav ul { flex-wrap: wrap; gap: 6px; justify-content: center; }
+            nav ul li a { width: 68px; height: 64px; font-size: 11px; }
+            nav ul li a .nav-icon { font-size: 24px; }
+            .main-content { margin-top: 130px; }
+            .grid-features { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <nav>
+            <ul>
+                <li><a href="index.html">
+                    <span class="nav-icon">🏠</span> Главная
+                </a></li>
+                <li><a href="calc.html">
+                    <span class="nav-icon">📐</span> Калькулятор
+                </a></li>
+                <li><a href="designer.html">
+                    <span class="nav-icon">🎨</span> Редактор
+                </a></li>
+                <li><a href="orders.html">
+                    <span class="nav-icon">📋</span> Заказы
+                </a></li>
+                <li><a href="about.html" class="active">
+                    <span class="nav-icon">ℹ️</span> О нас
+                </a></li>
+                <li><a href="profile.html">
+                    <span class="nav-icon">👤</span> Профиль
+                </a></li>
+                <li><a href="login.html" class="login-btn">
+                    <span class="nav-icon">🔑</span> Вход
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="about-header">
+        <h1>Типография в твоём кармане</h1>
+        <p>Мы объединили высокие технологии печати и простоту онлайн-заказа, чтобы вы экономили время.</p>
+    </div>
+
+    <div class="grid-features">
+        <div class="feature-box">
+            <h3>🚀 Скорость</h3>
+            <p>Ваш заказ поступает в печать сразу после подтверждения макета. Мы не ждем понедельника — мы печатаем сразу.</p>
+        </div>
+        <div class="feature-box">
+            <h3>🎨 Онлайн-конструктор</h3>
+            <p>Вам не нужен дизайнер, чтобы сделать баннер или наклейку. Наш редактор сделает всё за вас прямо в браузере.</p>
+        </div>
+        <div class="feature-box">
+            <h3>💎 Качество</h3>
+            <p>Используем только проверенные материалы: от стандартного баннера 440г до премиального литого полотна.</p>
+        </div>
+        <div class="feature-box">
+            <h3>📦 Доставка</h3>
+            <p>Бережно упакуем ваш заказ и отправим удобным способом. Вы получите уведомление о каждом этапе.</p>
+        </div>
+    </div>
+
+    <div class="contact-section">
+        <h2>Остались вопросы?</h2>
+        <p>Мы всегда на связи в Telegram. Пишите по любым вопросам — от помощи с макетом до оптовых заказов.</p>
+        <a href="https://t.me/ТВОЙ_НИК" class="tg-link">Написать в Telegram</a>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Делаем печать проще
+</footer>
+
+</body>
+</html>

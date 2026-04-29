@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа — K-Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --text: #2f3542;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+            --danger: #ff4757;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        /* ШАПКА */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+        .logo span { color: var(--accent); font-weight: 300; }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+            margin: 0; padding: 0;
+            align-items: center;
+        }
+
+        nav ul li a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.2s;
+            width: 78px;
+            height: 72px;
+            border-radius: 14px;
+            background-color: transparent;
+            text-align: center;
+            gap: 5px;
+        }
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+        nav ul li a:hover { background-color: #f0f0f0; color: var(--accent); }
+        nav ul li a.active { background-color: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+        .login-btn { background-color: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background-color: #20bf6b !important; }
+
+        /* БУРГЕР */
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+        }
+        .burger span {
+            width: 26px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        /* КОНТЕНТ */
+        .main-content {
+            margin-top: 100px;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-weight: 800;
+            font-size: 26px;
+            margin-bottom: 25px;
+        }
+
+        /* СВОДКА */
+        .summary-box {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+        .summary-row:last-child {
+            border: none;
+            font-weight: 700;
+            font-size: 20px;
+            color: var(--accent);
+        }
+        .summary-row .label { color: #747d8c; font-weight: 300; }
+
+        /* ВЫБОР СТОРОН */
+        .side-select {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .side-select h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .radio-row {
+            display: flex;
+            gap: 15px;
+        }
+        .radio-card {
+            flex: 1;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .radio-card:hover { border-color: var(--accent); }
+        .radio-card.selected {
+            border-color: var(--accent);
+            background: #f0fff5;
+            color: var(--accent);
+        }
+        .radio-card input { display: none; }
+
+        /* ЗАГРУЗКА */
+        .upload-section {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .upload-section h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .upload-zone {
+            border: 3px dashed #ccc;
+            border-radius: 14px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 12px;
+        }
+        .upload-zone:hover { border-color: var(--accent); background: #f9fffb; }
+        .upload-zone.has-file { border-color: var(--accent); background: #f0fff5; border-style: solid; }
+        .upload-zone .icon { font-size: 36px; }
+        .upload-zone p { margin: 6px 0 0; font-size: 13px; color: #999; font-weight: 300; }
+        .upload-zone .file-name { font-weight: 600; color: var(--accent); margin-top: 5px; }
+
+        /* КОНТАКТЫ */
+        .contacts-box {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+        .contacts-box h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        .form-group { margin-bottom: 14px; }
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #747d8c;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #dfe4ea;
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            font-weight: 400;
+        }
+
+        /* КНОПКА */
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 14px;
+            font-weight: 700;
+            font-size: 17px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: inherit;
+        }
+        .btn-submit:hover { background: #20bf6b; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(38,222,129,0.3); }
+
+        .btn-back {
+            display: block;
+            text-align: center;
+            margin-top: 12px;
+            color: #747d8c;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .btn-back:hover { color: var(--primary); }
+
+        /* ПОДВАЛ */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #a4b0be;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        /* МОДАЛКА */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 380px;
+        }
+        .modal .icon { font-size: 56px; }
+        .modal h2 { margin: 10px 0; font-weight: 800; }
+        .modal p { color: #747d8c; font-size: 14px; font-weight: 300; margin-bottom: 20px; }
+        .modal .btn-close {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        /* АДАПТИВ */
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; }
+            nav ul { display: none; flex-direction: column; width: 100%; gap: 4px; margin-top: 10px; }
+            nav ul.show { display: flex; }
+            nav ul li a { width: 100%; height: 44px; flex-direction: row; gap: 8px; font-size: 13px; justify-content: flex-start; padding-left: 14px; }
+            nav ul li a .nav-icon { font-size: 20px; }
+            .burger { display: flex; }
+            .main-content { margin-top: 80px; padding: 15px; }
+            .radio-row { flex-direction: column; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <button class="burger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+        <nav>
+            <ul id="navList">
+                <li><a href="index.html"><span class="nav-icon">🏠</span> Главная</a></li>
+                <li><a href="calc.html"><span class="nav-icon">📐</span> Калькулятор</a></li>
+                <li><a href="designer.html"><span class="nav-icon">🎨</span> Редактор</a></li>
+                <li><a href="orders.html"><span class="nav-icon">📋</span> Заказы</a></li>
+                <li><a href="about.html"><span class="nav-icon">ℹ️</span> О нас</a></li>
+                <li><a href="profile.html"><span class="nav-icon">👤</span> Профиль</a></li>
+                <li><a href="login.html" class="login-btn"><span class="nav-icon">🔑</span> Вход</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="main-content">
+    <h1>📋 Оформление заказа</h1>
+
+    <!-- Сводка -->
+    <div class="summary-box" id="orderSummary">
+        <div class="summary-row"><span class="label">Изделие:</span><span id="sumMaterial">—</span></div>
+        <div class="summary-row"><span class="label">Размер:</span><span id="sumSize">—</span></div>
+        <div class="summary-row"><span class="label">Количество:</span><span id="sumQty">—</span></div>
+        <div class="summary-row" id="sumExtrasRow" style="display:none;"><span class="label">Допы:</span><span id="sumExtras">—</span></div>
+        <div class="summary-row"><span class="label">Итого:</span><span id="sumTotal">—</span></div>
+    </div>
+
+    <!-- Выбор сторон -->
+    <div class="side-select">
+        <h3>Тип макета</h3>
+        <div class="radio-row" id="sideSelect">
+            <label class="radio-card selected" onclick="selectSide('single', this)">
+                <input type="radio" name="side" value="single" checked> 📄 Односторонний
+            </label>
+            <label class="radio-card" onclick="selectSide('double', this)">
+                <input type="radio" name="side" value="double"> 📑 Двусторонний
+            </label>
+        </div>
+    </div>
+
+    <!-- Загрузка макетов -->
+    <div class="upload-section">
+        <h3>📎 Загрузите макет</h3>
+
+        <div id="uploadSingle">
+            <div class="upload-zone" id="zoneSingle" onclick="document.getElementById('fileSingle').click()">
+                <div class="icon">📁</div>
+                <p>Нажмите или перетащите файл</p>
+                <p style="font-size:11px;">PDF, PNG, JPG, AI, CDR — до 25 МБ</p>
+                <div class="file-name" id="fileNameSingle"></div>
+            </div>
+            <input type="file" id="fileSingle" accept=".pdf,.png,.jpg,.jpeg,.ai,.cdr,.eps,.svg" style="display:none;" onchange="handleFile('single', event)">
+        </div>
+
+        <div id="uploadDouble" style="display:none;">
+            <div class="upload-zone" id="zoneFront" onclick="document.getElementById('fileFront').click()">
+                <div class="icon">📁</div>
+                <p>Лицевая сторона</p>
+                <p style="font-size:11px;">Нажмите или перетащите файл</p>
+                <div class="file-name" id="fileNameFront"></div>
+            </div>
+            <input type="file" id="fileFront" accept=".pdf,.png,.jpg,.jpeg,.ai,.cdr,.eps,.svg" style="display:none;" onchange="handleFile('front', event)">
+
+            <div class="upload-zone" id="zoneBack" onclick="document.getElementById('fileBack').click()">
+                <div class="icon">📁</div>
+                <p>Оборотная сторона</p>
+                <p style="font-size:11px;">Нажмите или перетащите файл</p>
+                <div class="file-name" id="fileNameBack"></div>
+            </div>
+            <input type="file" id="fileBack" accept=".pdf,.png,.jpg,.jpeg,.ai,.cdr,.eps,.svg" style="display:none;" onchange="handleFile('back', event)">
+        </div>
+    </div>
+
+    <!-- Контакты -->
+    <div class="contacts-box">
+        <h3>👤 Контактные данные</h3>
+        <div class="form-group">
+            <label>Ваше имя</label>
+            <input type="text" id="customerName" placeholder="Иван Иванов">
+        </div>
+        <div class="form-group">
+            <label>Телефон</label>
+            <input type="tel" id="customerPhone" placeholder="+7 (999) 123-45-67">
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" id="customerEmail" placeholder="email@example.com">
+        </div>
+    </div>
+
+    <button class="btn-submit" onclick="submitOrder()">✅ Оформить заказ</button>
+    <a href="calc.html" class="btn-back">← Назад к калькулятору</a>
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Типография будущего
+</footer>
+
+<!-- Модалка успеха -->
+<div class="modal-overlay" id="successModal">
+    <div class="modal">
+        <div class="icon">🎉</div>
+        <h2>Заказ оформлен!</h2>
+        <p>Мы свяжемся с вами в ближайшее время для подтверждения.</p>
+        <button class="btn-close" onclick="closeModal()">Отлично!</button>
+    </div>
+</div>
+
+<script>
+    // Данные заказа из localStorage (заполняются калькулятором)
+    const orderData = JSON.parse(localStorage.getItem('kprintOrder') || '{}');
+
+    function fillSummary() {
+        if (!orderData.material) {
+            document.getElementById('sumMaterial').innerText = 'Не указано';
+            document.getElementById('sumSize').innerText = '—';
+            document.getElementById('sumQty').innerText = '—';
+            document.getElementById('sumTotal').innerText = '—';
+            return;
+        }
+        document.getElementById('sumMaterial').innerText = orderData.material;
+        document.getElementById('sumSize').innerText = `${orderData.width} × ${orderData.height} мм`;
+        document.getElementById('sumQty').innerText = `${orderData.quantity} шт.`;
+        document.getElementById('sumTotal').innerText = `${orderData.total.toLocaleString()} р.`;
+
+        if (orderData.extras && orderData.extras.length > 0) {
+            document.getElementById('sumExtrasRow').style.display = 'flex';
+            document.getElementById('sumExtras').innerText = orderData.extras.join(', ');
+        }
+    }
+    fillSummary();
+
+    // Выбор стороны
+    function selectSide(side, el) {
+        document.querySelectorAll('#sideSelect .radio-card').forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        el.querySelector('input').checked = true;
+
+        document.getElementById('uploadSingle').style.display = side === 'single' ? 'block' : 'none';
+        document.getElementById('uploadDouble').style.display = side === 'double' ? 'block' : 'none';
+    }
+
+    // Загрузка файлов
+    function handleFile(type, event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        let zoneId, nameId;
+        if (type === 'single') { zoneId = 'zoneSingle';
+            nameId = 'fileNameSingle'; } else if (type === 'front') { zoneId = 'zoneFront';
+            nameId = 'fileNameFront'; } else { zoneId = 'zoneBack';
+            nameId = 'fileNameBack'; }
+
+        document.getElementById(zoneId).classList.add('has-file');
+        document.getElementById(nameId).innerText = '✅ ' + file.name;
+    }
+
+    // Drag & drop
+    function setupDragDrop(zoneId, inputId, type) {
+        const zone = document.getElementById(zoneId);
+        zone.addEventListener('dragover', e => { e.preventDefault();
+            zone.style.borderColor = 'var(--accent)'; });
+        zone.addEventListener('dragleave', () => { zone.style.borderColor = '#ccc'; });
+        zone.addEventListener('drop', e => {
+            e.preventDefault();
+            zone.style.borderColor = '#ccc';
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                const dt = new DataTransfer();
+                dt.items.add(file);
+                document.getElementById(inputId).files = dt.files;
+                handleFile(type, { target: { files: dt.files } });
+            }
+        });
+    }
+    setupDragDrop('zoneSingle', 'fileSingle', 'single');
+    setupDragDrop('zoneFront', 'fileFront', 'front');
+    setupDragDrop('zoneBack', 'fileBack', 'back');
+
+    // Отправка
+    function submitOrder() {
+        const name = document.getElementById('customerName').value.trim();
+        const phone = document.getElementById('customerPhone').value.trim();
+        if (!name || !phone) { alert('Заполните имя и телефон'); return; }
+
+        const order = {
+            ...orderData,
+            side: document.querySelector('input[name="side"]:checked').value,
+            customerName: name,
+            customerPhone: phone,
+            customerEmail: document.getElementById('customerEmail').value.trim(),
+            createdAt: new Date().toISOString(),
+            id: 'KP-' + Date.now(),
+        };
+
+        // Сохраняем
+        const orders = JSON.parse(localStorage.getItem('kprintOrders') || '[]');
+        orders.unshift(order);
+        localStorage.setItem('kprintOrders', JSON.stringify(orders.slice(0, 100)));
+
+        document.getElementById('successModal').classList.add('show');
+    }
+
+    function closeModal() {
+        document.getElementById('successModal').classList.remove('show');
+        window.location.href = 'orders.html';
+    }
+
+    // Бургер-меню
+    function toggleMenu() {
+        document.getElementById('navList').classList.toggle('show');
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Print — Калькулятор заказа</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        /* ЗАКРЕПЛЕННОЕ МЕНЮ */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--accent); font-weight: 300; }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+            margin: 0; padding: 0;
+            align-items: center;
+        }
+
+        nav ul li a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.2s;
+            width: 78px;
+            height: 72px;
+            border-radius: 14px;
+            background-color: transparent;
+            text-align: center;
+            gap: 5px;
+        }
+
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+        nav ul li a:hover { background-color: #f0f0f0; color: var(--accent); }
+        nav ul li a.active { background-color: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+        .login-btn { background-color: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background-color: #20bf6b !important; }
+
+        .burger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 10px;
+        }
+        .burger span {
+            width: 26px; height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: 0.3s;
+        }
+
+        /* ОТСТУП ПОД МЕНЮ */
+        .main-content {
+            padding-top: 100px;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 40px;
+        }
+
+        /* КАЛЬКУЛЯТОР */
+        .calc-container {
+            background: #fff;
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #555;
+        }
+
+        select, input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 400;
+            transition: 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--accent);
+            outline: none;
+        }
+
+        .row { display: flex; gap: 15px; }
+        .row div { flex: 1; }
+
+        .options-box {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .checkbox-item input {
+            width: auto;
+            margin-right: 12px;
+            accent-color: var(--accent);
+        }
+
+        .result-panel {
+            margin-top: 25px;
+            padding: 25px;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 15px;
+            text-align: center;
+        }
+        .result-panel span:first-child {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 300;
+        }
+        #totalPrice {
+            font-size: 34px;
+            font-weight: 800;
+            display: block;
+            color: var(--accent);
+            letter-spacing: -1px;
+        }
+        .min-order-msg {
+            font-size: 11px;
+            opacity: 0.6;
+            display: block;
+            margin-top: 5px;
+            font-weight: 300;
+        }
+
+        .btn-order {
+            display: block;
+            width: 80%;
+            margin: 20px auto 0;
+            padding: 16px;
+            background: var(--accent);
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+        }
+        .btn-order:hover {
+            background: #20bf6b;
+            box-shadow: 0 4px 12px rgba(38, 222, 129, 0.3);
+        }
+
+        .hidden { display: none; }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #a4b0be;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; }
+            nav ul { display: none; flex-direction: column; width: 100%; gap: 4px; margin-top: 10px; }
+            nav ul.show { display: flex; }
+            nav ul li a { width: 100%; height: 44px; flex-direction: row; gap: 8px; font-size: 13px; justify-content: flex-start; padding-left: 14px; }
+            nav ul li a .nav-icon { font-size: 20px; }
+            .burger { display: flex; }
+            .main-content { padding-top: 130px; }
+            .calc-container { margin: 0 10px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <button class="burger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+        <nav>
+            <ul id="navList">
+                <li><a href="index.html"><span class="nav-icon">🏠</span> Главная</a></li>
+                <li><a href="calc.html" class="active"><span class="nav-icon">📐</span> Калькулятор</a></li>
+                <li><a href="designer.html"><span class="nav-icon">🎨</span> Редактор</a></li>
+                <li><a href="orders.html"><span class="nav-icon">📋</span> Заказы</a></li>
+                <li><a href="about.html"><span class="nav-icon">ℹ️</span> О нас</a></li>
+                <li><a href="profile.html"><span class="nav-icon">👤</span> Профиль</a></li>
+                <li><a href="login.html" class="login-btn"><span class="nav-icon">🔑</span> Вход</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="calc-container">
+        <h1>Калькулятор заказа</h1>
+
+        <div class="form-group">
+            <label>Тип изделия</label>
+            <select id="material" onchange="calculate()">
+                <option value="500">Баннер (300 г.)</option>
+                <option value="700">Баннер стандарт (440 г.)</option>
+                <option value="820">Баннер премиум литой (510 г.)</option>
+                <option value="800">Баннерная сетка</option>
+                <option value="840">Самоклейка</option>
+                <option value="900">Перфорированная самоклейка</option>
+                <option value="1000">Световой бэклит</option>
+                <option value="500">Постерная бумага</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <div class="form-group">
+                <label>Ширина (мм)</label>
+                <input type="number" id="width" value="1000" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label>Высота (мм)</label>
+                <input type="number" id="height" value="1000" oninput="calculate()">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Количество (шт.)</label>
+            <input type="number" id="quantity" value="1" min="1" oninput="calculate()">
+        </div>
+
+        <div class="options-box">
+            <div id="bannerOptions">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="prokleika" onchange="calculate()"> Проклейка краев (60 р/м.п.)
+                </div>
+                <div class="form-group">
+                    <label>Люверсы (шаг)</label>
+                    <select id="luversStep" onchange="calculate()">
+                        <option value="0">Без люверсов</option>
+                        <option value="20">Через 20 см</option>
+                        <option value="30">Через 30 см</option>
+                        <option value="40">Через 40 см</option>
+                        <option value="50">Через 50 см</option>
+                        <option value="4">Только по углам (4 шт)</option>
+                    </select>
+                    <small id="luversCountText" style="font-size: 12px; color: #666; font-weight: 300;"></small>
+                </div>
+            </div>
+
+            <div class="checkbox-item">
+                <input type="checkbox" id="rezka" onchange="calculate()"> Дополнительная резка в край (20 р/м.п.)
+            </div>
+        </div>
+
+        <div class="result-panel">
+            <span>Итого к оплате:</span>
+            <span id="totalPrice">1000 р.</span>
+            <small class="min-order-msg" id="minMsg" style="display:none;">(Применен минимальный заказ 1000 р.)</small>
+        </div>
+
+        <button class="btn-order" onclick="goToCheckout()">Оформить заказ</button>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Типография будущего
+</footer>
+
+<script>
+    function calculate() {
+        const materialSelect = document.getElementById('material');
+        const matText = materialSelect.options[materialSelect.selectedIndex].text;
+        const pricePerMeter = parseFloat(materialSelect.value) || 0;
+        
+        const w = parseFloat(document.getElementById('width').value) || 0;
+        const h = parseFloat(document.getElementById('height').value) || 0;
+        const qty = parseInt(document.getElementById('quantity').value) || 1;
+        
+        const area = (w / 1000) * (h / 1000);
+        const perimeterM = ((w + h) * 2) / 1000;
+
+        const isBanner = matText.includes("Баннер") || matText.includes("сетка");
+        const bannerOptions = document.getElementById('bannerOptions');
+        
+        if (isBanner) { bannerOptions.classList.remove('hidden'); }
+        else { bannerOptions.classList.add('hidden'); document.getElementById('prokleika').checked = false; document.getElementById('luversStep').value = "0"; }
+
+        let pricePerOne = area * pricePerMeter;
+        const extras = [];
+        if (isBanner && document.getElementById('prokleika').checked) { pricePerOne += perimeterM * 60; extras.push('Проклейка'); }
+        if (document.getElementById('rezka').checked) { pricePerOne += perimeterM * 20; extras.push('Резка'); }
+
+        let countLuvers = 0;
+        if (isBanner) {
+            const luversStep = parseInt(document.getElementById('luversStep').value);
+            if (luversStep === 4) { countLuvers = 4; }
+            else if (luversStep > 0) { countLuvers = (Math.floor(w / (luversStep * 10)) + Math.floor(h / (luversStep * 10))) * 2; if (countLuvers < 4) countLuvers = 4; }
+            pricePerOne += countLuvers * 15;
+            if (countLuvers > 0) extras.push(`Люверсы (${countLuvers} шт)`);
+            document.getElementById('luversCountText').innerText = countLuvers > 0 ? `На 1 шт: ${countLuvers} люверсов` : "";
+        } else { document.getElementById('luversCountText').innerText = ""; }
+
+        let total = pricePerOne * qty;
+        if (total > 0 && total < 1000) { total = 1000; document.getElementById('minMsg').style.display = 'block'; }
+        else { document.getElementById('minMsg').style.display = 'none'; }
+
+        document.getElementById('totalPrice').innerText = Math.round(total).toLocaleString() + ' р.';
+
+        // Сохраняем данные для checkout
+        window._orderData = {
+            material: matText,
+            width: w,
+            height: h,
+            quantity: qty,
+            total: Math.round(total),
+            extras: extras
+        };
+    }
+
+    function goToCheckout() {
+        localStorage.setItem('kprintOrder', JSON.stringify(window._orderData || {}));
+        window.location.href = 'checkout.html';
+    }
+
+    function toggleMenu() {
+        document.getElementById('navList').classList.toggle('show');
+    }
+
+    window.onload = function() {
+        calculate();
+    };
+</script>
+
+</body>
+</html>
