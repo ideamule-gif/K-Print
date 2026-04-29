@@ -37,8 +37,8 @@
             padding: 12px 20px;
         }
         .logo {
-            font-size: 26px; font-weight: 800; color: var(--primary);
-            text-decoration: none; letter-spacing: -1px;
+            font-size: 26px; font-weight: 800;
+            color: var(--primary); text-decoration: none; letter-spacing: -1px;
         }
         .logo span { color: var(--accent); font-weight: 300; }
         nav ul {
@@ -72,6 +72,25 @@
             margin-left: auto; margin-right: auto; padding: 20px;
         }
 
+        /* НЕ ЗАЛОГИНЕН */
+        .login-card {
+            background: var(--white); border-radius: 20px;
+            padding: 50px 40px; box-shadow: var(--shadow); text-align: center;
+        }
+        .login-card .icon { font-size: 56px; margin-bottom: 10px; }
+        .login-card h2 { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
+        .login-card p { color: #747d8c; font-size: 14px; font-weight: 300; margin-bottom: 30px; }
+        .btn-tg {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            width: 100%; max-width: 320px; margin: 0 auto;
+            background: #0088cc; color: white; border: none;
+            padding: 16px; border-radius: 14px; font-weight: 700; font-size: 17px;
+            cursor: pointer; transition: 0.3s; font-family: inherit; text-decoration: none;
+        }
+        .btn-tg:hover { background: #0077b5; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,136,204,0.3); }
+        .btn-tg .tg-icon { font-size: 24px; }
+
+        /* ЗАЛОГИНЕН */
         .profile-card {
             background: var(--white); border-radius: 20px;
             padding: 40px; box-shadow: var(--shadow); margin-bottom: 20px;
@@ -83,8 +102,9 @@
         .avatar-circle {
             width: 80px; height: 80px; background: var(--accent); color: white;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 32px; font-weight: 700;
+            font-size: 32px; font-weight: 700; overflow: hidden;
         }
+        .avatar-circle img { width: 100%; height: 100%; object-fit: cover; }
         .user-meta h2 { margin: 0; font-size: 24px; font-weight: 700; }
         .user-meta p { margin: 5px 0 0 0; color: #747d8c; font-weight: 300; }
 
@@ -120,6 +140,7 @@
         .logout-link {
             display: block; text-align: center; margin-top: 20px;
             color: var(--danger); text-decoration: none; font-weight: 600; font-size: 14px;
+            cursor: pointer;
         }
         .logout-link:hover { opacity: 0.8; }
 
@@ -154,9 +175,7 @@
         .design-item .design-size {
             font-size: 12px; color: #747d8c; font-weight: 300; margin-bottom: 10px;
         }
-        .design-item .design-actions {
-            display: flex; gap: 8px;
-        }
+        .design-item .design-actions { display: flex; gap: 8px; }
         .design-item .design-actions button {
             flex: 1; padding: 7px 0; border-radius: 6px;
             font-size: 11px; font-weight: 600; cursor: pointer; border: none;
@@ -166,11 +185,7 @@
         .btn-edit:hover { background: #20bf6b; }
         .btn-delete { background: #f5f5f5; color: var(--danger); }
         .btn-delete:hover { background: #ffe0e0; }
-
-        .no-designs {
-            text-align: center; padding: 30px; color: #aaa;
-            font-weight: 300; font-size: 14px;
-        }
+        .no-designs { text-align: center; padding: 30px; color: #aaa; font-weight: 300; font-size: 14px; }
 
         footer { text-align: center; padding: 40px; color: #a4b0be; font-size: 13px; font-weight: 300; }
 
@@ -211,36 +226,48 @@
 </header>
 
 <div class="main-content">
-    <!-- Личные данные -->
-    <div class="profile-card">
-        <div class="profile-header">
-            <div class="avatar-circle">ИП</div>
-            <div class="user-meta">
-                <h2>Личный кабинет</h2>
-                <p>Клиент № 2026-AF</p>
-            </div>
-        </div>
-        <div class="info-grid">
-            <div class="input-group"><label>Ваше имя</label><input type="text" value="Иван Петров"></div>
-            <div class="input-group"><label>Телефон</label><input type="text" value="+7 (999) 000-00-00"></div>
-            <div class="input-group"><label>Email</label><input type="email" value="hello@kprint.ru"></div>
-            <div class="input-group"><label>Город доставки</label><input type="text" value="Краснодар"></div>
-        </div>
-        <div class="stats-row">
-            <div class="stat-box"><span>12</span><label>Заказов сделано</label></div>
-            <div class="stat-box"><span>24 500 ₽</span><label>Сумма покупок</label></div>
-        </div>
-        <button class="btn-save">Сохранить изменения</button>
-        <a href="#" class="logout-link">Выйти из аккаунта</a>
+
+    <!-- ===== НЕ ЗАЛОГИНЕН ===== -->
+    <div id="blockNotLogged" class="login-card" style="display:none;">
+        <div class="icon">🔐</div>
+        <h2>Выполните вход</h2>
+        <p>Авторизуйтесь через Telegram, чтобы открыть все возможности.</p>
+        <div id="tgWidget"></div>
     </div>
 
-    <!-- Мои макеты -->
-    <div class="designs-card">
-        <h3>🎨 Мои макеты</h3>
-        <div class="designs-grid" id="designsGrid">
-            <div class="no-designs">Нет сохранённых макетов</div>
+    <!-- ===== ЗАЛОГИНЕН ===== -->
+    <div id="blockLogged" style="display:none;">
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="avatar-circle" id="avatarCircle">👤</div>
+                <div class="user-meta">
+                    <h2 id="profileName">Личный кабинет</h2>
+                    <p id="profileUsername"></p>
+                </div>
+            </div>
+            <div class="info-grid">
+                <div class="input-group"><label>Ваше имя</label><input type="text" id="inputName" value="Иван Петров"></div>
+                <div class="input-group"><label>Телефон</label><input type="text" id="inputPhone" value="+7 (999) 000-00-00"></div>
+                <div class="input-group"><label>Email</label><input type="email" id="inputEmail" value="hello@kprint.ru"></div>
+                <div class="input-group"><label>Город доставки</label><input type="text" id="inputCity" value="Краснодар"></div>
+            </div>
+            <div class="stats-row">
+                <div class="stat-box"><span id="statOrders">0</span><label>Заказов сделано</label></div>
+                <div class="stat-box"><span id="statDesigns">0</span><label>Макетов сохранено</label></div>
+            </div>
+            <button class="btn-save" onclick="saveProfile()">Сохранить изменения</button>
+            <a class="logout-link" onclick="logout()">Выйти из аккаунта</a>
+        </div>
+
+        <!-- Мои макеты -->
+        <div class="designs-card">
+            <h3>🎨 Мои макеты</h3>
+            <div class="designs-grid" id="designsGrid">
+                <div class="no-designs">Нет сохранённых макетов</div>
+            </div>
         </div>
     </div>
+
 </div>
 
 <footer>
@@ -248,15 +275,101 @@
 </footer>
 
 <script>
+    let currentUser = null;
+
+    // Загрузка профиля
+    function loadProfile() {
+        currentUser = JSON.parse(localStorage.getItem('kprintUser') || '{}');
+
+        if (currentUser.loggedIn) {
+            // Залогинен — показываем ЛК
+            document.getElementById('blockNotLogged').style.display = 'none';
+            document.getElementById('blockLogged').style.display = 'block';
+
+            // Аватар
+            const avatar = document.getElementById('avatarCircle');
+            if (currentUser.photo_url) {
+                avatar.innerHTML = `<img src="${currentUser.photo_url}" alt="">`;
+            } else {
+                avatar.innerHTML = (currentUser.first_name || '👤').charAt(0).toUpperCase();
+            }
+
+            document.getElementById('profileName').innerText = (currentUser.first_name || '') + ' ' + (currentUser.last_name || '');
+            document.getElementById('profileUsername').innerText = currentUser.username ? '@' + currentUser.username : '';
+
+            // Поля
+            document.getElementById('inputName').value = currentUser.name || currentUser.first_name || '';
+            document.getElementById('inputPhone').value = currentUser.phone || '';
+            document.getElementById('inputEmail').value = currentUser.email || '';
+            document.getElementById('inputCity').value = currentUser.city || 'Краснодар';
+
+            // Статистика
+            const orders = JSON.parse(localStorage.getItem('kprintOrders') || '[]');
+            const designs = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
+            document.getElementById('statOrders').innerText = orders.length;
+            document.getElementById('statDesigns').innerText = designs.length;
+
+            loadDesigns();
+        } else {
+            // Не залогинен — показываем вход
+            document.getElementById('blockNotLogged').style.display = 'block';
+            document.getElementById('blockLogged').style.display = 'none';
+
+            // Вставляем виджет Telegram
+            const widget = document.createElement('script');
+            widget.src = 'https://telegram.org/js/telegram-widget.js?22';
+            widget.setAttribute('data-telegram-login', 'kprint_order_bot');
+            widget.setAttribute('data-size', 'large');
+            widget.setAttribute('data-radius', '14');
+            widget.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            widget.setAttribute('data-request-access', 'write');
+            document.getElementById('tgWidget').appendChild(widget);
+        }
+    }
+
+    // Обработка входа через Telegram
+    function onTelegramAuth(user) {
+        const userData = {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name || '',
+            username: user.username || '',
+            photo_url: user.photo_url || '',
+            auth_date: user.auth_date,
+            hash: user.hash,
+            loggedIn: true
+        };
+        localStorage.setItem('kprintUser', JSON.stringify(userData));
+        location.reload();
+    }
+
+    // Сохранить изменения
+    function saveProfile() {
+        if (!currentUser || !currentUser.loggedIn) return;
+        currentUser.name = document.getElementById('inputName').value;
+        currentUser.phone = document.getElementById('inputPhone').value;
+        currentUser.email = document.getElementById('inputEmail').value;
+        currentUser.city = document.getElementById('inputCity').value;
+        localStorage.setItem('kprintUser', JSON.stringify(currentUser));
+        alert('✅ Данные сохранены!');
+    }
+
+    // Выход
+    function logout() {
+        if (confirm('Выйти из аккаунта?')) {
+            localStorage.removeItem('kprintUser');
+            location.reload();
+        }
+    }
+
+    // Макеты
     function loadDesigns() {
         const grid = document.getElementById('designsGrid');
         const designs = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
-
         if (designs.length === 0) {
             grid.innerHTML = '<div class="no-designs">Нет сохранённых макетов</div>';
             return;
         }
-
         grid.innerHTML = designs.map((d, i) => `
             <div class="design-item">
                 <div class="design-preview">🎨</div>
@@ -274,8 +387,6 @@
         const designs = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
         const design = designs[index];
         if (!design) return alert('Макет не найден');
-
-        // Передаём данные в редактор через sessionStorage
         sessionStorage.setItem('kprintEditDesign', JSON.stringify(design));
         window.location.href = 'designer.html';
     }
@@ -286,14 +397,14 @@
         designs.splice(index, 1);
         localStorage.setItem('kprintDesigns', JSON.stringify(designs));
         loadDesigns();
+        document.getElementById('statDesigns').innerText = designs.length;
     }
 
     function toggleMenu() {
         document.getElementById('navList').classList.toggle('show');
     }
 
-    // Загрузка при открытии
-    loadDesigns();
+    loadProfile();
 </script>
 
 </body>
