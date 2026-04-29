@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — K-Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --text: #2f3542;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1300px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px;
+        }
+        .logo {
+            font-size: 26px; font-weight: 800;
+            color: var(--primary); text-decoration: none; letter-spacing: -1px;
+        }
+        .logo span { color: var(--accent); font-weight: 300; }
+        nav ul {
+            list-style: none; display: flex; gap: 10px;
+            margin: 0; padding: 0; align-items: center;
+        }
+        nav ul li a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: var(--primary); font-weight: 600; font-size: 12px;
+            width: 78px; height: 72px; border-radius: 14px;
+            background-color: transparent; text-align: center; gap: 5px; transition: 0.2s;
+        }
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+        nav ul li a:hover { background-color: #f0f0f0; color: var(--accent); }
+        nav ul li a.active { background-color: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+        .login-btn { background-color: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background-color: #20bf6b !important; }
+        .login-btn.active { background-color: #20bf6b !important; }
+
+        .auth-wrapper {
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 20px; margin-top: 100px;
+        }
+        .auth-card {
+            background: var(--white); width: 100%; max-width: 420px;
+            padding: 50px 40px; border-radius: 25px; box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .auth-card .icon { font-size: 56px; margin-bottom: 10px; }
+        .auth-card h2 { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
+        .auth-card p { color: #747d8c; font-size: 14px; font-weight: 300; margin-bottom: 30px; }
+
+        /* Кнопка Telegram */
+        .btn-tg {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            width: 100%; background: #0088cc; color: white; border: none;
+            padding: 16px; border-radius: 14px; font-weight: 700; font-size: 17px;
+            cursor: pointer; transition: 0.3s; font-family: inherit; text-decoration: none;
+        }
+        .btn-tg:hover { background: #0077b5; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,136,204,0.3); }
+        .btn-tg .tg-icon { font-size: 24px; }
+
+        .user-info {
+            display: none; margin-top: 20px; padding: 16px;
+            background: #f0fff5; border-radius: 12px; text-align: center;
+        }
+        .user-info img { width: 60px; height: 60px; border-radius: 50%; margin-bottom: 8px; }
+        .user-info .uname { font-weight: 700; font-size: 16px; }
+        .user-info .uphone { font-size: 13px; color: #747d8c; font-weight: 300; }
+        .user-info .btn-go {
+            display: inline-block; margin-top: 12px; background: var(--accent);
+            color: white; padding: 10px 24px; border-radius: 10px;
+            text-decoration: none; font-weight: 600; font-size: 14px;
+        }
+
+        footer { text-align: center; padding: 30px; color: #a4b0be; font-size: 13px; font-weight: 300; }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 10px; }
+            nav ul { flex-wrap: wrap; gap: 6px; justify-content: center; }
+            nav ul li a { width: 68px; height: 64px; font-size: 11px; }
+            nav ul li a .nav-icon { font-size: 24px; }
+            .auth-wrapper { margin-top: 140px; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <nav>
+            <ul>
+                <li><a href="index.html"><span class="nav-icon">🏠</span> Главная</a></li>
+                <li><a href="calc.html"><span class="nav-icon">📐</span> Калькулятор</a></li>
+                <li><a href="designer.html"><span class="nav-icon">🎨</span> Редактор</a></li>
+                <li><a href="orders.html"><span class="nav-icon">📋</span> Заказы</a></li>
+                <li><a href="about.html"><span class="nav-icon">ℹ️</span> О нас</a></li>
+                <li><a href="profile.html"><span class="nav-icon">👤</span> Профиль</a></li>
+                <li><a href="login.html" class="login-btn active"><span class="nav-icon">🔑</span> Вход</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <div class="icon">🚀</div>
+        <h2>Вход в K-Print</h2>
+        <p>Без паролей. Без регистраций. Один клик.</p>
+
+        <!-- Виджет Telegram Login -->
+        <div id="tgWidget"></div>
+
+        <!-- Информация о пользователе (после входа) -->
+        <div class="user-info" id="userInfo">
+            <img id="userPhoto" src="" alt="">
+            <div class="uname" id="userName"></div>
+            <div class="uphone" id="userPhone"></div>
+            <a href="profile.html" class="btn-go">Перейти в профиль →</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Типография будущего
+</footer>
+
+<script>
+    // Обработка данных от Telegram Login Widget
+    function onTelegramAuth(user) {
+        const userData = {
+            id: user.id,
+            first_name: user.first_name,
+            last_name: user.last_name || '',
+            username: user.username || '',
+            photo_url: user.photo_url || '',
+            auth_date: user.auth_date,
+            hash: user.hash,
+            loggedIn: true
+        };
+
+        // Сохраняем в localStorage
+        localStorage.setItem('kprintUser', JSON.stringify(userData));
+
+        // Показываем данные
+        document.getElementById('tgWidget').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
+        document.getElementById('userPhoto').src = user.photo_url || '';
+        document.getElementById('userName').innerText = user.first_name + ' ' + (user.last_name || '');
+        document.getElementById('userPhone').innerText = user.username ? '@' + user.username : '';
+
+        // Перенаправляем через 2 секунды
+        setTimeout(() => {
+            window.location.href = 'profile.html';
+        }, 2000);
+    }
+
+    // Если уже залогинен — показываем данные
+    (function() {
+        const user = JSON.parse(localStorage.getItem('kprintUser') || '{}');
+        if (user.loggedIn) {
+            document.getElementById('tgWidget').style.display = 'none';
+            document.getElementById('userInfo').style.display = 'block';
+            document.getElementById('userPhoto').src = user.photo_url || '';
+            document.getElementById('userName').innerText = (user.first_name || '') + ' ' + (user.last_name || '');
+            document.getElementById('userPhone').innerText = user.username ? '@' + user.username : '';
+        } else {
+            // Вставляем виджет
+            const widget = document.createElement('script');
+            widget.src = 'https://telegram.org/js/telegram-widget.js?22';
+            widget.setAttribute('data-telegram-login', 'kprint_order_bot');
+            widget.setAttribute('data-size', 'large');
+            widget.setAttribute('data-radius', '14');
+            widget.setAttribute('data-onauth', 'onTelegramAuth(user)');
+            widget.setAttribute('data-request-access', 'write');
+            document.getElementById('tgWidget').appendChild(widget);
+        }
+    })();
+</script>
+
+</body>
+</html>
