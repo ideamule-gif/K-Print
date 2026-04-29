@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заказы — K-Print</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --text: #2f3542;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            font-weight: 400;
+        }
+
+        /* ЗАКРЕПЛЕННОЕ МЕНЮ */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 800;
+            color: var(--primary);
+            text-decoration: none;
+            letter-spacing: -1px;
+        }
+
+        .logo span { color: var(--accent); font-weight: 300; }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        nav ul li a {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 12px;
+            transition: 0.2s;
+            width: 78px;
+            height: 72px;
+            border-radius: 14px;
+            background-color: transparent;
+            text-align: center;
+            gap: 5px;
+        }
+
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+
+        nav ul li a:hover { background-color: #f0f0f0; color: var(--accent); }
+
+        nav ul li a.active { background-color: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+
+        .login-btn { background-color: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background-color: #20bf6b !important; }
+
+        /* КОНТЕНТ */
+        .main-content {
+            margin-top: 100px;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+            padding: 20px;
+        }
+
+        h1 { font-weight: 800; margin-bottom: 30px; font-size: 28px; }
+
+        .order-item {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 5px solid #dfe4ea;
+        }
+
+        .order-item.status-done { border-left-color: var(--accent); }
+        .order-item.status-wait { border-left-color: #f1c40f; }
+
+        .order-info h3 { margin: 0 0 5px 0; font-size: 18px; font-weight: 700; }
+        .order-meta { font-size: 13px; color: #747d8c; margin-bottom: 10px; font-weight: 300; }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-done { background: #e3fcef; color: #00875a; }
+        .badge-wait { background: #fff9db; color: #947600; }
+
+        .order-actions { display: flex; align-items: center; gap: 20px; }
+        .price { font-size: 20px; font-weight: 800; }
+
+        .btn-small {
+            text-decoration: none;
+            color: var(--primary);
+            border: 1px solid #dfe4ea;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .btn-small:hover { background: #f8f9fa; border-color: #ced4da; }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #a4b0be;
+            font-size: 13px;
+            font-weight: 300;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-direction: column; gap: 10px; }
+            nav ul { flex-wrap: wrap; gap: 6px; justify-content: center; }
+            nav ul li a { width: 68px; height: 64px; font-size: 11px; }
+            nav ul li a .nav-icon { font-size: 24px; }
+            .main-content { margin-top: 130px; }
+            .order-item { flex-direction: column; align-items: flex-start; gap: 15px; }
+            .order-actions { width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <nav>
+            <ul>
+                <li><a href="index.html">
+                    <span class="nav-icon">🏠</span> Главная
+                </a></li>
+                <li><a href="calc.html">
+                    <span class="nav-icon">📐</span> Калькулятор
+                </a></li>
+                <li><a href="designer.html">
+                    <span class="nav-icon">🎨</span> Редактор
+                </a></li>
+                <li><a href="orders.html" class="active">
+                    <span class="nav-icon">📋</span> Заказы
+                </a></li>
+                <li><a href="about.html">
+                    <span class="nav-icon">ℹ️</span> О нас
+                </a></li>
+                <li><a href="profile.html">
+                    <span class="nav-icon">👤</span> Профиль
+                </a></li>
+                <li><a href="login.html" class="login-btn">
+                    <span class="nav-icon">🔑</span> Вход
+                </a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="main-content">
+    <h1>Мои заказы</h1>
+
+    <div class="order-item status-done">
+        <div class="order-info">
+            <div class="order-meta">№ 2026-01 • 28 апреля 2026</div>
+            <h3>Баннер (440г) 200х100см</h3>
+            <span class="badge badge-done">Готов к выдаче</span>
+        </div>
+        <div class="order-actions">
+            <a href="#" class="btn-small">Скачать PDF</a>
+            <div class="price">1 500 ₽</div>
+        </div>
+    </div>
+
+    <div class="order-item status-wait">
+        <div class="order-info">
+            <div class="order-meta">№ 2026-02 • 29 апреля 2026</div>
+            <h3>Самоклейка (глянец) 50х50см</h3>
+            <span class="badge badge-wait">В печати</span>
+        </div>
+        <div class="order-actions">
+            <a href="#" class="btn-small">Детали</a>
+            <div class="price">800 ₽</div>
+        </div>
+    </div>
+
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Типография будущего
+</footer>
+
+</body>
+</html>

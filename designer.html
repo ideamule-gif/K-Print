@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Print — Редактор макетов</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2f3542;
+            --accent: #26de81;
+            --danger: #ff4757;
+            --bg: #f1f2f6;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+        }
+        .nav-container {
+            max-width: 1300px; margin: 0 auto;
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 20px;
+        }
+        .logo {
+            font-size: 26px; font-weight: 800;
+            color: var(--primary); text-decoration: none; letter-spacing: -1px;
+        }
+        .logo span { color: var(--accent); font-weight: 300; }
+        nav ul {
+            list-style: none; display: flex; gap: 10px;
+            margin: 0; padding: 0; align-items: center;
+        }
+        nav ul li a {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-decoration: none; color: var(--primary); font-weight: 600; font-size: 12px;
+            width: 78px; height: 72px; border-radius: 14px;
+            background-color: transparent; text-align: center; gap: 5px; transition: 0.2s;
+        }
+        nav ul li a .nav-icon { font-size: 26px; line-height: 1; }
+        nav ul li a:hover { background-color: #f0f0f0; color: var(--accent); }
+        nav ul li a.active { background-color: var(--primary); color: white; }
+        nav ul li a.active .nav-icon { color: var(--accent); }
+        .login-btn { background-color: var(--accent) !important; color: white !important; }
+        .login-btn:hover { background-color: #20bf6b !important; }
+
+        .burger {
+            display: none; flex-direction: column; gap: 5px;
+            cursor: pointer; background: none; border: none; padding: 10px;
+        }
+        .burger span {
+            width: 26px; height: 3px; background: var(--primary);
+            border-radius: 3px; transition: 0.3s;
+        }
+
+        .main-content {
+            padding-top: 100px; display: flex; justify-content: center; padding-bottom: 40px;
+        }
+        .editor-container {
+            background: var(--white); padding: 24px; border-radius: 20px;
+            box-shadow: var(--shadow); width: 95%; max-width: 1100px;
+        }
+        .history-bar { display: flex; gap: 8px; margin-bottom: 12px; justify-content: center; }
+        .hist-btn {
+            padding: 7px 14px; border: none; border-radius: 8px;
+            cursor: pointer; background: #e0e0e0; font-size: 13px;
+            font-weight: 600; font-family: inherit; transition: 0.2s;
+        }
+        .hist-btn:hover { background: #d0d0d0; }
+        .hist-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .main-text-area { width: 100%; margin-bottom: 15px; }
+        .main-text-area textarea {
+            width: 100%; height: 80px; padding: 12px; font-size: 15px;
+            border: 2px solid var(--accent); border-radius: 12px;
+            font-family: inherit; font-weight: 400; resize: vertical; outline: none;
+        }
+
+        .canvas-viewport {
+            width: 100%; height: 380px; background: #ccd1d9;
+            border-radius: 12px; display: flex; justify-content: center;
+            align-items: center; overflow: hidden; margin-bottom: 15px;
+        }
+        #canvas-container {
+            background: #fff; position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .line-item {
+            position: absolute; cursor: move; user-select: none;
+            white-space: pre-wrap; line-height: 1.1; padding: 5px;
+            font-family: 'Inter', Arial, sans-serif; font-weight: 400;
+        }
+
+        .controls-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .panel { background: #f8f9fa; padding: 14px; border-radius: 12px; border: 1px solid #e9ecef; }
+        .panel-title {
+            font-weight: 700; font-size: 12px; margin-bottom: 10px; display: block;
+            color: var(--primary); border-bottom: 2px solid var(--accent);
+            padding-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .control-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .group { display: flex; flex-direction: column; flex: 1; }
+        .group label {
+            font-size: 10px; font-weight: 600; margin-bottom: 3px;
+            color: #777; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        input, select {
+            padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px;
+            font-size: 13px; font-family: inherit; font-weight: 400;
+        }
+        .icon-group { display: flex; gap: 4px; background: #eee; padding: 4px; border-radius: 8px; width: fit-content; }
+        .icon-btn {
+            width: 34px; height: 34px; background: #fff; border: 1px solid #ddd;
+            cursor: pointer; border-radius: 6px; display: flex; justify-content: center;
+            align-items: center; font-size: 16px; transition: 0.2s;
+        }
+        .icon-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+        .icon-btn svg { width: 18px; height: 18px; fill: currentColor; }
+        .swatch {
+            width: 24px; height: 24px; border-radius: 6px; cursor: pointer;
+            border: 2px solid transparent; display: inline-block; margin: 2px; transition: 0.15s;
+        }
+        .swatch:hover { border-color: var(--accent); transform: scale(1.15); }
+        .btn-add {
+            background: var(--primary); color: #fff; padding: 10px; border: none;
+            border-radius: 8px; cursor: pointer; width: 100%; font-weight: 600;
+            font-size: 12px; margin-top: 10px; font-family: inherit; transition: 0.2s;
+        }
+        .btn-add:hover { background: #3d4454; }
+        .btn-del {
+            background: var(--danger); color: #fff; padding: 5px 10px;
+            border: none; border-radius: 6px; cursor: pointer; font-size: 10px;
+            margin-left: auto; font-weight: 600; font-family: inherit;
+        }
+
+        /* Кнопки скачивания и сохранения */
+        .btn-row {
+            display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+        }
+        .btn-pdf {
+            background: var(--accent); color: #fff; padding: 14px 28px;
+            border: none; border-radius: 40px; font-weight: 700; font-size: 14px;
+            cursor: pointer; box-shadow: 0 8px 15px rgba(38,222,129,0.3);
+            transition: 0.2s; font-family: inherit;
+        }
+        .btn-pdf:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(38,222,129,0.4); }
+        .btn-jpg {
+            background: var(--primary); color: #fff; padding: 14px 28px;
+            border: none; border-radius: 40px; font-weight: 700; font-size: 14px;
+            cursor: pointer; transition: 0.2s; font-family: inherit;
+        }
+        .btn-jpg:hover { background: #3d4454; transform: translateY(-2px); }
+        .btn-save {
+            background: #fff; color: var(--primary); padding: 14px 28px;
+            border: 2px solid var(--primary); border-radius: 40px;
+            font-weight: 700; font-size: 14px; cursor: pointer; transition: 0.2s; font-family: inherit;
+        }
+        .btn-save:hover { background: var(--primary); color: #fff; }
+
+        footer { text-align: center; padding: 30px; color: #a4b0be; font-size: 13px; font-weight: 300; }
+
+        @media (max-width: 768px) {
+            .nav-container { flex-wrap: wrap; }
+            nav ul { display: none; flex-direction: column; width: 100%; gap: 4px; margin-top: 10px; }
+            nav ul.show { display: flex; }
+            nav ul li a { width: 100%; height: 44px; flex-direction: row; gap: 8px; font-size: 13px; justify-content: flex-start; padding-left: 14px; }
+            nav ul li a .nav-icon { font-size: 20px; }
+            .burger { display: flex; }
+            .main-content { padding-top: 130px; }
+            .controls-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="nav-container">
+        <a href="index.html" class="logo">K-<span>PRINT</span></a>
+        <button class="burger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </button>
+        <nav>
+            <ul id="navList">
+                <li><a href="index.html"><span class="nav-icon">🏠</span> Главная</a></li>
+                <li><a href="calc.html"><span class="nav-icon">📐</span> Калькулятор</a></li>
+                <li><a href="designer.html" class="active"><span class="nav-icon">🎨</span> Редактор</a></li>
+                <li><a href="orders.html"><span class="nav-icon">📋</span> Заказы</a></li>
+                <li><a href="about.html"><span class="nav-icon">ℹ️</span> О нас</a></li>
+                <li><a href="profile.html"><span class="nav-icon">👤</span> Профиль</a></li>
+                <li><a href="login.html" class="login-btn"><span class="nav-icon">🔑</span> Вход</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="editor-container">
+        <div class="history-bar">
+            <button class="hist-btn" id="undoBtn" onclick="undo()">↩ Назад</button>
+            <button class="hist-btn" id="redoBtn" onclick="redo()">Вперед ↪</button>
+        </div>
+
+        <div class="main-text-area">
+            <textarea id="text-input" placeholder="Введите ваш текст..." oninput="syncText()"></textarea>
+        </div>
+
+        <div class="canvas-viewport">
+            <div id="canvas-container"></div>
+        </div>
+
+        <div class="controls-grid">
+            <div class="panel">
+                <div style="display:flex; align-items:center; margin-bottom: 8px;">
+                    <span class="panel-title" style="margin:0;">Настройки текста</span>
+                    <button class="btn-del" onclick="deleteActiveLine()">Удалить ×</button>
+                </div>
+                <div class="control-row">
+                    <div class="group">
+                        <label>Жирность</label>
+                        <select id="weight-select" onchange="syncText(); saveState();">
+                            <option value="normal">Regular</option>
+                            <option value="bold">Bold</option>
+                            <option value="900">Black</option>
+                        </select>
+                    </div>
+                    <div class="group">
+                        <label>Размер</label>
+                        <input type="number" id="size-input" value="60" oninput="syncText()">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    <div>
+                        <label>Выравнивание</label>
+                        <div class="icon-group">
+                            <button class="icon-btn" onclick="setTextAlign('left')"><svg viewBox="0 0 24 24"><path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z"/></svg></button>
+                            <button class="icon-btn" onclick="setTextAlign('center')"><svg viewBox="0 0 24 24"><path d="M7 15h10v-2H7v2zm-4 4h18v-2H3v2zm4-8h10V9H7v2zm-4-6v2h18V5H3z"/></svg></button>
+                            <button class="icon-btn" onclick="setTextAlign('right')"><svg viewBox="0 0 24 24"><path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z" transform="scale(-1,1) translate(-24,0)"/></svg></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label>Центровать</label>
+                        <div class="icon-group">
+                            <button class="icon-btn" onclick="alignText('middle')">●</button>
+                            <button class="icon-btn" onclick="alignText('center')">↔</button>
+                            <button class="icon-btn" onclick="alignText('vertical')">↕</button>
+                        </div>
+                    </div>
+                </div>
+                <label style="margin-top:10px; display:block; font-weight:600; font-size:12px; color:#555;">Цвет букв</label>
+                <div id="text-palette"></div>
+                <button class="btn-add" onclick="addLine()">+ Добавить еще строку</button>
+            </div>
+            <div class="panel">
+                <span class="panel-title">Настройки баннера</span>
+                <div class="control-row">
+                    <div class="group">
+                        <label>Ширина (мм)</label>
+                        <input type="number" id="canvas-w" value="2000" oninput="updateCanvasSize()">
+                    </div>
+                    <div class="group">
+                        <label>Высота (мм)</label>
+                        <input type="number" id="canvas-h" value="1000" oninput="updateCanvasSize()">
+                    </div>
+                </div>
+                <label style="font-weight:600; font-size:12px; color:#555;">Цвет фона</label>
+                <div id="bg-palette" style="margin-bottom: 8px;"></div>
+                <label style="font-weight:600; font-size:12px; color:#555;">Своя картинка на фон</label>
+                <input type="file" onchange="uploadBg(event)" style="font-size: 11px;">
+            </div>
+        </div>
+
+        <!-- Кнопки -->
+        <div class="btn-row">
+            <button class="btn-pdf" onclick="generatePDF()">📄 Скачать PDF</button>
+            <button class="btn-jpg" onclick="downloadJPG()">🖼️ Скачать JPG</button>
+            <button class="btn-save" onclick="saveToProfile()">💾 Сохранить в профиль</button>
+        </div>
+    </div>
+</div>
+
+<footer>
+    &copy; 2026 K-Print — Типография будущего
+</footer>
+
+<script>
+    const container = document.getElementById('canvas-container');
+    const colors = ["#ffffff", "#000000", "#ff0000", "#ffd700", "#0000ff", "#008000", "#ff8c00", "#ff1493"];
+    let lines = [];
+    let activeLineIndex = 0;
+    let bgColor = "#ffffff";
+    let history = [];
+    let historyStep = -1;
+
+    function saveState() {
+        const state = JSON.stringify({ lines, bgColor, w: document.getElementById('canvas-w').value, h: document.getElementById('canvas-h').value });
+        if (historyStep < history.length - 1) history = history.slice(0, historyStep + 1);
+        history.push(state);
+        if (history.length > 50) history.shift();
+        historyStep = history.length - 1;
+        updateHistoryButtons();
+    }
+
+    function undo() { if (historyStep > 0) { historyStep--; loadState(history[historyStep]); } }
+    function redo() { if (historyStep < history.length - 1) { historyStep++; loadState(history[historyStep]); } }
+
+    function loadState(stateStr) {
+        const state = JSON.parse(stateStr);
+        lines = state.lines; bgColor = state.bgColor;
+        document.getElementById('canvas-w').value = state.w;
+        document.getElementById('canvas-h').value = state.h;
+        updateCanvasSize(false); render(); updateHistoryButtons();
+    }
+
+    function updateHistoryButtons() {
+        document.getElementById('undoBtn').disabled = historyStep <= 0;
+        document.getElementById('redoBtn').disabled = historyStep >= history.length - 1;
+    }
+
+    function updateCanvasSize(save = true) {
+        let wMm = parseFloat(document.getElementById('canvas-w').value) || 1000;
+        let hMm = parseFloat(document.getElementById('canvas-h').value) || 1000;
+        const maxW = container.parentElement.clientWidth - 40;
+        const maxH = 380;
+        let ratio = Math.min(maxW / wMm, maxH / hMm);
+        container.style.width = (wMm * ratio) + 'px';
+        container.style.height = (hMm * ratio) + 'px';
+        if (save) saveState(); render();
+    }
+
+    function addLine() {
+        lines.push({ text: "Ваш текст", size: 50, weight: "bold", color: "#000000", x: 50, y: 50, align: "center" });
+        activeLineIndex = lines.length - 1;
+        document.getElementById('text-input').value = lines[activeLineIndex].text;
+        saveState(); render();
+    }
+
+    function deleteActiveLine() {
+        if (lines.length > 0) {
+            lines.splice(activeLineIndex, 1);
+            activeLineIndex = Math.max(0, lines.length - 1);
+            if (lines[activeLineIndex]) document.getElementById('text-input').value = lines[activeLineIndex].text;
+            saveState(); render();
+        }
+    }
+
+    function setTextAlign(val) { if (lines[activeLineIndex]) { lines[activeLineIndex].align = val; saveState(); render(); } }
+
+    function alignText(type) {
+        if (!lines[activeLineIndex]) return;
+        const line = lines[activeLineIndex];
+        const el = document.getElementById('el-' + activeLineIndex);
+        if (!el) return;
+        const cW = container.clientWidth;
+        const cH = container.clientHeight;
+        const eW = el.offsetWidth;
+        const eH = el.offsetHeight;
+        if (type === 'middle') { line.x = (cW / 2) - (eW / 2); line.y = (cH / 2) - (eH / 2); }
+        else if (type === 'center') { line.x = (cW / 2) - (eW / 2); }
+        else if (type === 'vertical') { line.y = (cH / 2) - (eH / 2); }
+        saveState(); render();
+    }
+
+    function syncText() {
+        if (!lines[activeLineIndex]) return;
+        lines[activeLineIndex].text = document.getElementById('text-input').value;
+        lines[activeLineIndex].weight = document.getElementById('weight-select').value;
+        lines[activeLineIndex].size = parseInt(document.getElementById('size-input').value) || 20;
+        render();
+    }
+
+    document.getElementById('text-input').onblur = saveState;
+    document.getElementById('size-input').onblur = saveState;
+
+    function render() {
+        container.style.backgroundColor = bgColor;
+        container.innerHTML = '';
+        lines.forEach((line, index) => {
+            const el = document.createElement('div');
+            el.className = 'line-item';
+            el.id = 'el-' + index;
+            if (index === activeLineIndex) el.style.outline = "2px dashed var(--accent)";
+            el.innerText = line.text;
+            el.style.fontSize = line.size + 'px';
+            el.style.fontWeight = line.weight;
+            el.style.color = line.color;
+            el.style.textAlign = line.align || "left";
+            el.style.left = line.x + 'px';
+            el.style.top = line.y + 'px';
+            el.onmousedown = (e) => {
+                activeLineIndex = index;
+                document.getElementById('text-input').value = line.text;
+                let rect = container.getBoundingClientRect();
+                let shiftX = e.clientX - el.getBoundingClientRect().left;
+                let shiftY = e.clientY - el.getBoundingClientRect().top;
+                document.onmousemove = (e2) => {
+                    line.x = e2.clientX - rect.left - shiftX;
+                    line.y = e2.clientY - rect.top - shiftY;
+                    el.style.left = line.x + 'px'; el.style.top = line.y + 'px';
+                };
+                document.onmouseup = () => { document.onmousemove = null; saveState(); render(); };
+            };
+            container.appendChild(el);
+        });
+    }
+
+    // Экспорт canvas в изображение
+    function renderToCanvas() {
+        const wMm = parseFloat(document.getElementById('canvas-w').value) || 1000;
+        const hMm = parseFloat(document.getElementById('canvas-h').value) || 1000;
+        const pxPerMm = 4;
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.round(wMm * pxPerMm);
+        canvas.height = Math.round(hMm * pxPerMm);
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (container.style.backgroundImage && container.style.backgroundImage !== 'none') {
+            const bgUrl = container.style.backgroundImage.replace(/url\(['"]?(.*?)['"]?\)/, '$1');
+            const img = new Image();
+            img.src = bgUrl;
+            if (img.complete) ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+
+        const containerW = parseInt(container.style.width) || 1;
+        const scaleMm = wMm / containerW;
+        const scalePx = pxPerMm * scaleMm;
+
+        lines.forEach(line => {
+            const xPx = line.x * scalePx;
+            const yPx = (line.y + line.size) * scalePx;
+            const fontPx = line.size * scalePx;
+            ctx.font = `${line.weight} ${fontPx}px Inter, Arial, sans-serif`;
+            ctx.fillStyle = line.color;
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText(line.text, xPx, yPx);
+        });
+
+        return canvas;
+    }
+
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const wMm = parseFloat(document.getElementById('canvas-w').value);
+        const hMm = parseFloat(document.getElementById('canvas-h').value);
+        const canvas = renderToCanvas();
+        const pdf = new jsPDF('l', 'mm', [wMm, hMm]);
+        pdf.addImage(canvas.toDataURL('image/png'), 'PNG', 0, 0, wMm, hMm);
+        pdf.save('kprint-layout.pdf');
+    }
+
+    function downloadJPG() {
+        const canvas = renderToCanvas();
+        const link = document.createElement('a');
+        link.download = 'kprint-layout.jpg';
+        link.href = canvas.toDataURL('image/jpeg', 0.95);
+        link.click();
+    }
+
+    function saveToProfile() {
+        const design = {
+            id: 'DSG-' + Date.now(),
+            name: 'Макет от ' + new Date().toLocaleDateString(),
+            lines: lines,
+            bgColor: bgColor,
+            width: document.getElementById('canvas-w').value,
+            height: document.getElementById('canvas-h').value,
+            savedAt: new Date().toISOString(),
+        };
+        const saved = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
+        saved.unshift(design);
+        localStorage.setItem('kprintDesigns', JSON.stringify(saved.slice(0, 50)));
+        alert('✅ Макет сохранён в профиль!');
+    }
+
+    function initPalettes() {
+        const bgP = document.getElementById('bg-palette');
+        const txP = document.getElementById('text-palette');
+        colors.forEach(c => {
+            const s1 = document.createElement('div'); s1.className = 'swatch'; s1.style.backgroundColor = c;
+            s1.onclick = () => { bgColor = c; saveState(); render(); };
+            bgP.appendChild(s1);
+            const s2 = document.createElement('div'); s2.className = 'swatch'; s2.style.backgroundColor = c;
+            s2.onclick = () => { if(lines[activeLineIndex]) { lines[activeLineIndex].color = c; saveState(); render(); } };
+            txP.appendChild(s2);
+        });
+    }
+
+    function uploadBg(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { container.style.backgroundImage = `url(${ev.target.result})`; container.style.backgroundSize='cover'; saveState(); };
+        reader.readAsDataURL(e.target.files[0]);
+    }
+
+    function toggleMenu() {
+        document.getElementById('navList').classList.toggle('show');
+    }
+
+    initPalettes();
+    addLine();
+    updateCanvasSize();
+</script>
+
+</body>
+</html>
