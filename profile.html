@@ -72,7 +72,6 @@
             margin-left: auto; margin-right: auto; padding: 20px;
         }
 
-        /* НЕ ЗАЛОГИНЕН */
         .login-card {
             background: var(--white); border-radius: 20px;
             padding: 50px 40px; box-shadow: var(--shadow); text-align: center;
@@ -80,17 +79,7 @@
         .login-card .icon { font-size: 56px; margin-bottom: 10px; }
         .login-card h2 { font-weight: 800; font-size: 24px; margin-bottom: 8px; }
         .login-card p { color: #747d8c; font-size: 14px; font-weight: 300; margin-bottom: 30px; }
-        .btn-tg {
-            display: flex; align-items: center; justify-content: center; gap: 12px;
-            width: 100%; max-width: 320px; margin: 0 auto;
-            background: #0088cc; color: white; border: none;
-            padding: 16px; border-radius: 14px; font-weight: 700; font-size: 17px;
-            cursor: pointer; transition: 0.3s; font-family: inherit; text-decoration: none;
-        }
-        .btn-tg:hover { background: #0077b5; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,136,204,0.3); }
-        .btn-tg .tg-icon { font-size: 24px; }
 
-        /* ЗАЛОГИНЕН */
         .profile-card {
             background: var(--white); border-radius: 20px;
             padding: 40px; box-shadow: var(--shadow); margin-bottom: 20px;
@@ -144,7 +133,6 @@
         }
         .logout-link:hover { opacity: 0.8; }
 
-        /* МАКЕТЫ */
         .designs-card {
             background: var(--white); border-radius: 20px;
             padding: 30px; box-shadow: var(--shadow);
@@ -227,7 +215,7 @@
 
 <div class="main-content">
 
-    <!-- ===== НЕ ЗАЛОГИНЕН ===== -->
+    <!-- НЕ ЗАЛОГИНЕН -->
     <div id="blockNotLogged" class="login-card" style="display:none;">
         <div class="icon">🔐</div>
         <h2>Выполните вход</h2>
@@ -235,7 +223,7 @@
         <div id="tgWidget"></div>
     </div>
 
-    <!-- ===== ЗАЛОГИНЕН ===== -->
+    <!-- ЗАЛОГИНЕН -->
     <div id="blockLogged" style="display:none;">
         <div class="profile-card">
             <div class="profile-header">
@@ -259,7 +247,6 @@
             <a class="logout-link" onclick="logout()">Выйти из аккаунта</a>
         </div>
 
-        <!-- Мои макеты -->
         <div class="designs-card">
             <h3>🎨 Мои макеты</h3>
             <div class="designs-grid" id="designsGrid">
@@ -277,16 +264,13 @@
 <script>
     let currentUser = null;
 
-    // Загрузка профиля
     function loadProfile() {
         currentUser = JSON.parse(localStorage.getItem('kprintUser') || '{}');
 
         if (currentUser.loggedIn) {
-            // Залогинен — показываем ЛК
             document.getElementById('blockNotLogged').style.display = 'none';
             document.getElementById('blockLogged').style.display = 'block';
 
-            // Аватар
             const avatar = document.getElementById('avatarCircle');
             if (currentUser.photo_url) {
                 avatar.innerHTML = `<img src="${currentUser.photo_url}" alt="">`;
@@ -297,13 +281,11 @@
             document.getElementById('profileName').innerText = (currentUser.first_name || '') + ' ' + (currentUser.last_name || '');
             document.getElementById('profileUsername').innerText = currentUser.username ? '@' + currentUser.username : '';
 
-            // Поля
             document.getElementById('inputName').value = currentUser.name || currentUser.first_name || '';
             document.getElementById('inputPhone').value = currentUser.phone || '';
             document.getElementById('inputEmail').value = currentUser.email || '';
             document.getElementById('inputCity').value = currentUser.city || 'Краснодар';
 
-            // Статистика
             const orders = JSON.parse(localStorage.getItem('kprintOrders') || '[]');
             const designs = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
             document.getElementById('statOrders').innerText = orders.length;
@@ -311,14 +293,12 @@
 
             loadDesigns();
         } else {
-            // Не залогинен — показываем вход
             document.getElementById('blockNotLogged').style.display = 'block';
             document.getElementById('blockLogged').style.display = 'none';
 
-            // Вставляем виджет Telegram
             const widget = document.createElement('script');
             widget.src = 'https://telegram.org/js/telegram-widget.js?22';
-            widget.setAttribute('data-telegram-login', 'kprint_order_bot');
+            widget.setAttribute('data-telegram-login', 'zakazbannersbot');
             widget.setAttribute('data-size', 'large');
             widget.setAttribute('data-radius', '14');
             widget.setAttribute('data-onauth', 'onTelegramAuth(user)');
@@ -327,7 +307,6 @@
         }
     }
 
-    // Обработка входа через Telegram
     function onTelegramAuth(user) {
         const userData = {
             id: user.id,
@@ -343,7 +322,6 @@
         location.reload();
     }
 
-    // Сохранить изменения
     function saveProfile() {
         if (!currentUser || !currentUser.loggedIn) return;
         currentUser.name = document.getElementById('inputName').value;
@@ -354,7 +332,6 @@
         alert('✅ Данные сохранены!');
     }
 
-    // Выход
     function logout() {
         if (confirm('Выйти из аккаунта?')) {
             localStorage.removeItem('kprintUser');
@@ -362,7 +339,6 @@
         }
     }
 
-    // Макеты
     function loadDesigns() {
         const grid = document.getElementById('designsGrid');
         const designs = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
