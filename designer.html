@@ -121,6 +121,7 @@
             padding: 7px 10px; border: 1px solid #ccc; border-radius: 6px;
             font-size: 13px; font-family: inherit; font-weight: 400;
         }
+
         .icon-group { display: flex; gap: 4px; background: #eee; padding: 4px; border-radius: 8px; width: fit-content; }
         .icon-btn {
             width: 34px; height: 34px; background: #fff; border: 1px solid #ddd;
@@ -146,7 +147,12 @@
             margin-left: auto; font-weight: 600; font-family: inherit;
         }
 
-        /* Кнопки скачивания и сохранения */
+        /* Подсказка */
+        .hint {
+            font-size: 11px; color: #747d8c; font-weight: 300; margin-top: 6px;
+        }
+
+        /* Кнопки */
         .btn-row {
             display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
         }
@@ -261,10 +267,47 @@
                 </div>
                 <label style="margin-top:10px; display:block; font-weight:600; font-size:12px; color:#555;">Цвет букв</label>
                 <div id="text-palette"></div>
-                <button class="btn-add" onclick="addLine()">+ Добавить еще строку</button>
+                <button class="btn-add" onclick="addLine()">+ Добавить строку</button>
             </div>
+
             <div class="panel">
                 <span class="panel-title">Настройки баннера</span>
+
+                <!-- Готовые размеры -->
+                <div class="group" style="margin-bottom:12px;">
+                    <label>Готовые размеры</label>
+                    <select id="presetSize" onchange="applyPreset()">
+                        <option value="">— Выберите размер —</option>
+                        <optgroup label="📇 Полиграфия (с вылетами 2 мм)">
+                            <option value="bc">Визитка 90×50 мм (+2 мм вылеты)</option>
+                            <option value="a7">Листовка A7 74×105 мм (+2 мм вылеты)</option>
+                            <option value="a6">Листовка A6 105×148 мм (+2 мм вылеты)</option>
+                            <option value="a5">Листовка A5 148×210 мм (+2 мм вылеты)</option>
+                            <option value="a4">Листовка A4 210×297 мм (+2 мм вылеты)</option>
+                            <option value="dl">Еврофлаер DL 210×99 мм (+2 мм вылеты)</option>
+                        </optgroup>
+                        <optgroup label="🪧 Баннеры (стандартные, без вылетов)">
+                            <option value="b80x40">800×400 мм</option>
+                            <option value="b100x40">1000×400 мм</option>
+                            <option value="b100x50">1000×500 мм</option>
+                            <option value="b120x50">1200×500 мм</option>
+                            <option value="b150x80">1500×800 мм</option>
+                            <option value="b150x100">1500×1000 мм</option>
+                        </optgroup>
+                        <optgroup label="📐 Стандартные размеры (без вылетов)">
+                            <option value="std-a7">A7 (74×105 мм)</option>
+                            <option value="std-a6">A6 (105×148 мм)</option>
+                            <option value="std-a5">A5 (148×210 мм)</option>
+                            <option value="std-a4">A4 (210×297 мм)</option>
+                            <option value="std-a3">A3 (297×420 мм)</option>
+                            <option value="std-a2">A2 (420×594 мм)</option>
+                            <option value="std-a1">A1 (594×841 мм)</option>
+                            <option value="std-a0">A0 (841×1189 мм)</option>
+                        </optgroup>
+                    </select>
+                    <div class="hint" id="bleedHint" style="display:none;">✅ Добавлены вылеты по 2 мм с каждой стороны</div>
+                </div>
+
                 <div class="control-row">
                     <div class="group">
                         <label>Ширина (мм)</label>
@@ -282,7 +325,6 @@
             </div>
         </div>
 
-        <!-- Кнопки -->
         <div class="btn-row">
             <button class="btn-pdf" onclick="generatePDF()">📄 Скачать PDF</button>
             <button class="btn-jpg" onclick="downloadJPG()">🖼️ Скачать JPG</button>
@@ -303,6 +345,44 @@
     let bgColor = "#ffffff";
     let history = [];
     let historyStep = -1;
+
+    // Готовые размеры
+    const presets = {
+        'bc':       { w: 90, h: 50,  bleed: true },
+        'a7':       { w: 74, h: 105, bleed: true },
+        'a6':       { w: 105, h: 148, bleed: true },
+        'a5':       { w: 148, h: 210, bleed: true },
+        'a4':       { w: 210, h: 297, bleed: true },
+        'dl':       { w: 210, h: 99,  bleed: true },
+        'b80x40':   { w: 800, h: 400 },
+        'b100x40':  { w: 1000, h: 400 },
+        'b100x50':  { w: 1000, h: 500 },
+        'b120x50':  { w: 1200, h: 500 },
+        'b150x80':  { w: 1500, h: 800 },
+        'b150x100': { w: 1500, h: 1000 },
+        'std-a7':   { w: 74, h: 105 },
+        'std-a6':   { w: 105, h: 148 },
+        'std-a5':   { w: 148, h: 210 },
+        'std-a4':   { w: 210, h: 297 },
+        'std-a3':   { w: 297, h: 420 },
+        'std-a2':   { w: 420, h: 594 },
+        'std-a1':   { w: 594, h: 841 },
+        'std-a0':   { w: 841, h: 1189 },
+    };
+
+    function applyPreset() {
+        const key = document.getElementById('presetSize').value;
+        if (!key || !presets[key]) {
+            document.getElementById('bleedHint').style.display = 'none';
+            return;
+        }
+        const p = presets[key];
+        const bleed = p.bleed ? 2 : 0;
+        document.getElementById('canvas-w').value = p.w + bleed * 2;
+        document.getElementById('canvas-h').value = p.h + bleed * 2;
+        document.getElementById('bleedHint').style.display = p.bleed ? 'block' : 'none';
+        updateCanvasSize();
+    }
 
     function saveState() {
         const state = JSON.stringify({ lines, bgColor, w: document.getElementById('canvas-w').value, h: document.getElementById('canvas-h').value });
@@ -416,7 +496,6 @@
         });
     }
 
-    // Экспорт canvas в изображение
     function renderToCanvas() {
         const wMm = parseFloat(document.getElementById('canvas-w').value) || 1000;
         const hMm = parseFloat(document.getElementById('canvas-h').value) || 1000;
@@ -509,8 +588,28 @@
         document.getElementById('navList').classList.toggle('show');
     }
 
+    // Загрузка макета для редактирования из профиля
+    (function() {
+        const editData = sessionStorage.getItem('kprintEditDesign');
+        if (editData) {
+            const d = JSON.parse(editData);
+            lines = d.lines || [];
+            bgColor = d.bgColor || '#ffffff';
+            document.getElementById('canvas-w').value = d.width || 2000;
+            document.getElementById('canvas-h').value = d.height || 1000;
+            activeLineIndex = 0;
+            if (lines[0]) {
+                document.getElementById('text-input').value = lines[0].text || '';
+                document.getElementById('size-input').value = lines[0].size || 60;
+                document.getElementById('weight-select').value = lines[0].weight || 'bold';
+            }
+            sessionStorage.removeItem('kprintEditDesign');
+            updateCanvasSize(false);
+        }
+    })();
+
     initPalettes();
-    addLine();
+    if (lines.length === 0) addLine();
     updateCanvasSize();
 </script>
 
