@@ -147,10 +147,12 @@
             margin-left: auto; font-weight: 600; font-family: inherit;
         }
 
+        /* Подсказка */
         .hint {
             font-size: 11px; color: #747d8c; font-weight: 300; margin-top: 6px;
         }
 
+        /* Кнопки */
         .btn-row {
             display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
         }
@@ -271,6 +273,7 @@
             <div class="panel">
                 <span class="panel-title">Настройки баннера</span>
 
+                <!-- Готовые размеры -->
                 <div class="group" style="margin-bottom:12px;">
                     <label>Готовые размеры</label>
                     <select id="presetSize" onchange="applyPreset()">
@@ -343,6 +346,7 @@
     let history = [];
     let historyStep = -1;
 
+    // Готовые размеры
     const presets = {
         'bc':       { w: 90, h: 50,  bleed: true },
         'a7':       { w: 74, h: 105, bleed: true },
@@ -546,12 +550,9 @@
     }
 
     function saveToProfile() {
-        const name = prompt('📝 Название макета:', 'Макет от ' + new Date().toLocaleDateString());
-        if (!name || name.trim() === '') return;
-
         const design = {
             id: 'DSG-' + Date.now(),
-            name: name.trim(),
+            name: 'Макет от ' + new Date().toLocaleDateString(),
             lines: lines,
             bgColor: bgColor,
             width: document.getElementById('canvas-w').value,
@@ -561,7 +562,7 @@
         const saved = JSON.parse(localStorage.getItem('kprintDesigns') || '[]');
         saved.unshift(design);
         localStorage.setItem('kprintDesigns', JSON.stringify(saved.slice(0, 50)));
-        alert('✅ Макет «' + name.trim() + '» сохранён в профиль!');
+        alert('✅ Макет сохранён в профиль!');
     }
 
     function initPalettes() {
@@ -587,6 +588,7 @@
         document.getElementById('navList').classList.toggle('show');
     }
 
+    // Загрузка макета для редактирования из профиля
     (function() {
         const editData = sessionStorage.getItem('kprintEditDesign');
         if (editData) {
